@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "976810689690",
+    "project_id": "azgard9-2e5b5",
+    "storage_bucket": "azgard9-2e5b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976810689690:android:670493e1edfc3ba7ff0b23",
+        "android_client_info": {
+          "package_name": "com.azgard9"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe-ipu9PUlrOM7wfth4N06SQQmeBpfqME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
