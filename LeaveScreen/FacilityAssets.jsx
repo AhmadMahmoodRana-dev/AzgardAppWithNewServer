@@ -11,6 +11,7 @@ import {
 import {Dropdown} from 'react-native-element-dropdown';
 import axios from 'axios';
 import CheckBox from 'react-native-check-box';
+import BASEURL from '../Constants/BaseUrl';
 
 // Utility function to format date to "dd-mm-rr"
 const formatDate = dateString => {
@@ -70,7 +71,7 @@ const FacilityAssets = () => {
   const fetchAssets = async () => {
     try {
       const response = await axios.get(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/Assets/get?EMP_ID=7207',
+        `${BASEURL}/ords/api/Assets/get?EMP_ID=${global.xx_emp_id}`,
       );
       setCurrentAssets(response.data.FacilityAssets);
     } catch (error) {
@@ -98,7 +99,7 @@ const FacilityAssets = () => {
 
     try {
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/facility/add',
+        `${BASEURL}/ords/api/facility/add`,
         requestData,
         {
           headers: {

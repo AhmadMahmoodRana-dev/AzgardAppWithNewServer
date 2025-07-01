@@ -13,6 +13,7 @@ import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import {Dropdown} from 'react-native-element-dropdown';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 
 const OutdoorDutyEntry = () => {
   const [leavHistory, setLeavHistory] = useState([]);
@@ -106,7 +107,7 @@ const OutdoorDutyEntry = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/outdoorDuty/getdata?EMP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/outdoorDuty/getdata?EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
 
@@ -128,7 +129,7 @@ const OutdoorDutyEntry = () => {
       return;
     }
 
-    const apiUrl = 'http://hcm-azgard9.azgard9.com:8444/ords/api/outdoor/submit';
+    const apiUrl = `${BASEURL}/ords/api/outdoor/submit`;
 
     // Helper function to format Date object as 'YYYY-MM-DD"T"HH:MI AM'
     const formatDateToOracle = date => {
@@ -561,7 +562,7 @@ export default OutdoorDutyEntry;
 //       return;
 //     }
 
-//     const apiUrl = 'http://hcm-azgard9.azgard9.com:8444/ords/api/outdoor/submit';
+//     const apiUrl = 'https://erp.visionplusapps.com:8081/ords/api/outdoor/submit';
 
 //     // Helper function to format Date object as 'YYYY-MM-DD"T"HH:MI AM'
 //     const formatDateToOracle = (date) => {

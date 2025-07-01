@@ -17,6 +17,7 @@ import numeral from 'numeral';
 import {Dropdown} from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Install this for icons
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 
 const AdvanceSalary = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -73,7 +74,7 @@ const AdvanceSalary = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
+        `https://erp.visionplusapps.com:8081/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
       setLeavHistory(data.salary);
@@ -93,39 +94,121 @@ const AdvanceSalary = () => {
   };
 
   // Handle file upload
-  const handleFileUpload = async () => {
-    //console.log(selectedFile);
-    const formData = new FormData();
-    formData.append('AMOUNT', amount);
-    formData.append('ADVANCE_DATE', moment(fromDate).format('DD-MMM-YY'));
-    formData.append('REMARKS', remarks);
-    formData.append('CREATED_BY', global.xx_user_id);
-    formData.append('BANK_ID', value);
-    formData.append('EMP_ID', global.xx_emp_id);
+//   const handleFileUpload = async () => {
+//   if (!amount || !remarks || !value || !global.xx_user_id || !global.xx_emp_id) {
+//     Alert.alert('Validation Error', 'Please fill all required fields.');
+//     return;
+//   }
 
-    try {
-      const response = await axios.post(
-        // 'https://erp.visionplusapps.com:8081/ords/api/salary/insert',
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/salary/insert',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      );
+//   const formData = new FormData();
+//   formData.append('AMOUNT', amount);
+//   formData.append('ADVANCE_DATE', moment(fromDate).format('DD-MMM-YY'));
+//   formData.append('REMARKS', remarks);
+//   formData.append('CREATED_BY', global.xx_user_id);
+//   formData.append('BANK_ID', value);
+//   formData.append('EMP_ID', global.xx_emp_id);
 
-      if (response) {
-        Alert.alert('Add Record successfully!');
-        console.log('Added Record');
-        console.log(response.data);
+//   console.log('FormData being sent:');
+//   for (let pair of formData.entries()) {
+//     console.log(`${pair[0]}: ${pair[1]}`);
+//   }
+
+//   try {
+//     console.log("Calling API...");
+
+//     const response = await axios.post(
+//       'https://erp.visionplusapps.com:8081/ords/api/salary/insert',
+//       formData,
+//       {
+//         headers: {
+//           // DO NOT manually set content-type for FormData
+//           Accept: 'application/json',
+//         },
+//       }
+//     );
+
+//     console.log("API response:", response?.data);
+
+//     if (response?.data && response.data.STATUS === 'SUCCESS') {
+//       Alert.alert('Success', 'Record added successfully!');
+//     } else {
+//       Alert.alert('Failed', response?.data?.MESSAGE || 'Failed to add record');
+//     }
+
+//   } catch (error) {
+//     console.log("Upload error:", error?.response?.data || error.message);
+//     Alert.alert('Upload Error', error?.message || 'Something went wrong');
+//   }
+// };
+
+
+const handleFileUpload = async () => {
+  if (!amount || !remarks || !value || !global.xx_user_id || !global.xx_emp_id) {
+    Alert.alert('Validation Error', 'Please fill all required fields.');
+    return;
+  }
+
+  const advanceDate = moment(fromDate).format('DD-MMM-YY');
+  
+  // Log values directly instead of using FormData entries
+  console.log('Submitting with:');
+  console.log('AMOUNT:', amount);
+  console.log('ADVANCE_DATE:', advanceDate);
+  console.log('REMARKS:', remarks);
+  console.log('CREATED_BY:', global.xx_user_id);
+  console.log('BANK_ID:', value);
+  console.log('EMP_ID:', global.xx_emp_id);
+
+  const formData = new FormData();
+  formData.append('AMOUNT', amount);
+  formData.append('ADVANCE_DATE', advanceDate);
+  formData.append('REMARKS', remarks);
+  formData.append('CREATED_BY', global.xx_user_id);
+  formData.append('BANK_ID', value);
+  formData.append('EMP_ID', global.xx_emp_id);
+
+  try {
+    console.log("Calling API...");
+    const response = await axios.post(
+      `${BASEURL}/ords/api/salary/insert`,
+      formData,
+      {
+        headers: { Accept: 'application/json' },
+        timeout: 10000, // 10-second timeout
       }
+    );
 
-      console.log(formData);
-    } catch (error) {
-      Alert.alert('Error uploading file:', error);
+    console.log("API response:", response?.data);
+
+    if (response?.data?.STATUS === 'SUCCESS') {
+      Alert.alert('Success', 'Record added successfully!');
+      // Refresh history after successful submission
+      fetchLeaveRequests();
+    } else {
+      Alert.alert('Failed', response?.data?.MESSAGE || 'Unknown error occurred');
     }
-  };
+  } catch (error) {
+    console.log("Full error object:", error);
+    
+    if (error.response) {
+      // Server responded with error status (4xx/5xx)
+      console.log("Response data:", error.response.data);
+      console.log("Status code:", error.response.status);
+      Alert.alert(
+        'Server Error', 
+        error.response.data?.MESSAGE || `Error ${error.response.status}`
+      );
+    } else if (error.request) {
+      // Request was made but no response received
+      console.log("No response received:", error.request);
+      Alert.alert('Network Error', 'No response from server');
+    } else {
+      // Other errors (e.g., timeout)
+      console.log("Request error:", error.message);
+      Alert.alert('Error', error.message || 'Request failed');
+    }
+  }
+};
 
   return (
     <SafeAreaProvider>
@@ -199,7 +282,7 @@ const AdvanceSalary = () => {
                   style={styles.uploadButton}
                   onPress={() => {
                     handleFileUpload();
-                    console.log('pressing');
+                    console.log("press")
                   }}>
                   <Text>Save</Text>
                 </Pressable>

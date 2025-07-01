@@ -14,6 +14,7 @@ import Geolocation from 'react-native-geolocation-service';
 import haversine from 'haversine';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASEURL from '../Constants/BaseUrl';
 
 const CurentLocation = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -67,7 +68,7 @@ const CurentLocation = () => {
   const fetchLocations = async emp_id => {
     try {
       const response = await axios.get(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/geolocation/locations?EMP_ID=${emp_id}`, // Use emp_id here,
+        `${BASEURL}/ords/api/geolocation/locations?EMP_ID=${emp_id}`, // Use emp_id here,
       );
       if (response.data.status === '200' && response.data.locations) {
         setLocations(response.data.locations);
@@ -159,7 +160,7 @@ const CurentLocation = () => {
     }
     try {
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/attendance/mark',
+        `${BASEURL}/ords/api/attendance/mark`,
         {
           emp_id: global.xx_emp_id,
           longitude: currentLocation.longitude,

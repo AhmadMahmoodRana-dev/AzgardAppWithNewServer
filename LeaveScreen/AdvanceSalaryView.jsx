@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import numeral from 'numeral';
+import BASEURL from '../Constants/BaseUrl';
 const AdvanceSalaryView = ({navigation}) => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,7 @@ const AdvanceSalaryView = ({navigation}) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
       setLeaveRequests(data.salary);
@@ -60,7 +61,7 @@ const AdvanceSalaryView = ({navigation}) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/AZ/api/update?LEAVE_ID=${id}`,
+        `${BASEURL}/ords/AZ/api/update?LEAVE_ID=${id}`,
         {
           method: 'PUT',
           headers: {

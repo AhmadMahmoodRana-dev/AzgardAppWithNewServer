@@ -16,6 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DocumentPicker from 'react-native-document-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Install this for icons
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 const LeaveWithoutPay = () => {
   const [leaveSummary, setLeaveSummary] = useState(null);
   const [value, setValue] = useState('16');
@@ -87,7 +88,7 @@ const LeaveWithoutPay = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/history/az?EMP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/history/az?EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
 
@@ -106,7 +107,7 @@ const LeaveWithoutPay = () => {
   useEffect(() => {
     // Fetch data from first API
     fetch(
-      `http://hcm-azgard9.azgard9.com:8444/ords/api/summary/az?EMP_ID=${global.xx_emp_id}`,
+      `${BASEURL}/ords/api/summary/az?EMP_ID=${global.xx_emp_id}`,
     )
       .then(response => {
         if (!response.ok) {
@@ -222,7 +223,7 @@ const LeaveWithoutPay = () => {
 
     try {
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/leave/insertLeave',
+        `${BASEURL}/ords/api/leave/insertLeave`,
         formData,
         {
           headers: {

@@ -4,6 +4,7 @@ import React,{useState,useEffect} from 'react';
 import { View, Text, StyleSheet,TouchableOpacity,TextInput,Alert,ActivityIndicator,ScrollView ,Button} from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import DocumentPicker from 'react-native-document-picker';
+import BASEURL from '../Constants/BaseUrl';
 
 
   const UpdatePersonalAdd = () => {
@@ -69,7 +70,7 @@ const [leavHistory, setLeavHistory] = useState([]);
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/emp_update/get`
+        `${BASEURL}/ords/api/emp_update/get`
       );
       const data = await response.json();
       setLeavHistory(data.cinic_update);
@@ -102,7 +103,7 @@ const [leavHistory, setLeavHistory] = useState([]);
     
  // console.log(formData);
     try {
-        const response = await axios.post('http://hcm-azgard9.azgard9.com:8444/ords/api/updateemp/post', formData, {
+        const response = await axios.post(`${BASEURL}/ords/api/updateemp/post`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

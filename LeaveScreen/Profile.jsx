@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASEURL from '../Constants/BaseUrl';
 
 const Profile = ({ navigation }) => {
   const [profileData, setProfileData] = useState([]);
@@ -20,7 +21,7 @@ const Profile = ({ navigation }) => {
     const fetchProfileData = async () => {
       try {
         const response = await fetch(
-          `http://hcm-azgard9.azgard9.com:8444/ords/api/empDetail/detail?EMP_ID=${global.xx_emp_id}` // Replace with your API URL
+          `${BASEURL}/ords/api/empDetail/detail?EMP_ID=${global.xx_emp_id}` // Replace with your API URL
         );
         const data = await response.json();
         setProfileData(data.emp_detail);

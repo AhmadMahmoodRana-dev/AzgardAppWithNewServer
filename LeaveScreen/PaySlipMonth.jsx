@@ -84,6 +84,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import BASEURL from "../Constants/BaseUrl";
 
 const PayslipScreen = ({ navigation }) => {
   const [payslipData, setPayslipData] = useState([]);
@@ -95,7 +96,7 @@ const PayslipScreen = ({ navigation }) => {
       setLoading(true);
       try {
         const response = await fetch(
-          "http://hcm-azgard9.azgard9.com:8444/ords/api/PayslipMonth/get"
+          `${BASEURL}/ords/api/PayslipMonth/get`
         );
         const data = await response.json();
         setPayslipData(data.payslip); // Ensure the API returns last 12 months

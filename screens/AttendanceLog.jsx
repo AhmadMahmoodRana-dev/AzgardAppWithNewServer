@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import BASEURL from '../Constants/BaseUrl';
 
 const {width} = Dimensions.get('window');
 
@@ -79,7 +80,7 @@ export default function AttendanceLog() {
   const fetchAttendanceData = useCallback(async emp_id => {
     setLoading(true);
     try {
-      const API_URL = `http://hcm-azgard9.azgard9.com:8444/ords/api/Attendance_history_json_LONG_LAT/get?EMP_ID=${emp_id}`;
+      const API_URL = `${BASEURL}/ords/api/Attendance_history_json_LONG_LAT/get?EMP_ID=${emp_id}`;
       console.log('Fetching attendance for EMP_ID:', emp_id);
       const response = await fetch(API_URL);
       const data = await response.json();

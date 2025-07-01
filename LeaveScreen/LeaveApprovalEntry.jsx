@@ -284,6 +284,7 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
+import BASEURL from '../Constants/BaseUrl';
 
 const LeaveApprovalEntry = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -320,7 +321,7 @@ const LeaveApprovalEntry = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/az/get?SUP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/az/get?SUP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
       setLeaveRequests(data.leave_approval);
@@ -334,7 +335,7 @@ const LeaveApprovalEntry = () => {
   const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
       const response = await fetch(
-        'http://hcm-azgard9.azgard9.com:8444azgard/send-approval-notification',
+        `${BASEURL}/send-approval-notification`,
         {
           method: 'POST',
           headers: {
@@ -362,7 +363,7 @@ const LeaveApprovalEntry = () => {
       setLoading(true);
       const L_STATUS = 'APPROVED';
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
         {
           method: 'PUT',
           headers: {
@@ -393,7 +394,7 @@ const LeaveApprovalEntry = () => {
       setLoading(true);
       const L_STATUS = 'REJECTED';
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
         {
           method: 'PUT',
           headers: {

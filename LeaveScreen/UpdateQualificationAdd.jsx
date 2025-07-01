@@ -5,6 +5,7 @@ import { View, Text, StyleSheet,TouchableOpacity,TextInput,Alert,ActivityIndicat
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 ///import DateTimePicker from '@react-native-community/datetimepicker';
 import DocumentPicker from 'react-native-document-picker';
+import BASEURL from '../Constants/BaseUrl';
 
   const UpdateQualificationAdd = () => {
 
@@ -46,7 +47,7 @@ useEffect(() => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/emp_update/get`
+        `${BASEURL}/ords/api/emp_update/get`
       );
       const data = await response.json();
       setLeavHistory(data.qualification_update);
@@ -60,30 +61,41 @@ useEffect(() => {
 
 
   const handleFileUpload = async () => {
+  const formData = new FormData();
 
-    const formData = new FormData();
+  formData.append('QUALIFICATION', qualification);
+  formData.append('YEAR', year);
+  formData.append('EMP_ID', global.xx_emp_id);
+  formData.append('CGPA', cgpa);
+  formData.append('GRADE', grade);
+  formData.append('INSTITUTE', institute);
 
-    formData.append('QUALIFICATION',qualification);
-    formData.append('YEAR',year);
-    formData.append('EMP_ID',global.xx_emp_id);
-    formData.append('CGPA', cgpa);
-    formData.append('GRADE', grade);
-    formData.append('INSTITUTE', institute);
-    
- // console.log(formData);
-    try {
-        const response = await axios.post('http://hcm-azgard9.azgard9.com:8444/ords/api/Qualification/insert', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-        console.log('Update Qualification  successfully!');
-        Alert.alert('Update Qualification  successfully!');
-    } catch (error) {
-        Alert.alert('Error uploading file: ' );
-    }
+  if (selectedFile) {
+    formData.append('FILE', {
+      uri: selectedFile.uri,
+      type: selectedFile.type || 'application/octet-stream', // or use proper MIME type
+      name: selectedFile.name || 'document',
+    });
+  }
 
+  try {
+    const response = await axios.post(
+      `${BASEURL}/ords/api/Qualification/insert`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    console.log('Update Qualification successfully!');
+    Alert.alert('Success', 'Qualification updated successfully!');
+  } catch (error) {
+    console.error('Upload error:', error.response?.data || error.message);
+    Alert.alert('Upload failed', 'Something went wrong while uploading.');
+  }
 };
+
 
   return (
     <SafeAreaProvider>

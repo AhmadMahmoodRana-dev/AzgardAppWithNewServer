@@ -255,6 +255,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
+import BASEURL from '../Constants/BaseUrl';
 
 const rnBiometrics = new ReactNativeBiometrics();
 const screenWidth = Dimensions.get('window').width;
@@ -347,7 +348,7 @@ function LoginScreen({navigation}) {
       console.log(fcmToken);
       if (fcmToken) {
         await axios.put(
-          'http://hcm-azgard9.azgard9.com:8444/ords/api/notification/update',
+          `${BASEURL}/ords/api/notification/update`,
           {
             EMP_ID: empId,
             USER_NOTIFICATION: fcmToken,
@@ -367,7 +368,7 @@ function LoginScreen({navigation}) {
       console.log('Password:', password);
 
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/AZ/LOGIN',
+        `${BASEURL}/ords/api/AZ/LOGIN`,  
         {username, password},
       );
 

@@ -17,6 +17,7 @@ import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import DocumentPicker from 'react-native-document-picker';
 import axios from 'axios';
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 
 const ShortLeaveForm = () => {
   const [leaveType, setLeaveType] = useState('28');
@@ -63,12 +64,13 @@ const ShortLeaveForm = () => {
     }
     hideDatePicker();
   };
+  console.log("IQRA",global.xx_emp_id)
 
   const fetchLeaveRequests = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/view/shortLeave?EMP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/view/shortLeave?EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
 
@@ -87,7 +89,7 @@ const ShortLeaveForm = () => {
   useEffect(() => {
     // Fetch data from first API
     fetch(
-      `http://hcm-azgard9.azgard9.com:8444/ords/api/summary/az?EMP_ID=${global.xx_emp_id}`,
+      `${BASEURL}/ords/api/summary/az?EMP_ID=${global.xx_emp_id}`,
     )
       .then(response => {
         if (!response.ok) {
@@ -274,9 +276,10 @@ const ShortLeaveForm = () => {
       });
     }
 
+    console.log("SHORT LEAVE FORM DATA",formData)
     try {
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/shortLeaves/submit',
+      `${BASEURL}/ords/api/shortLeave/submit`,
         formData,
         {
           headers: {

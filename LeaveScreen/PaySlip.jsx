@@ -766,7 +766,7 @@ const PayslipScreen = ({ route }) => {
   useEffect(() => {
     const fetchPayslip = async () => {
       try {
-        const response = await fetch(`http://hcm-azgard9.azgard9.com:8444azgard/payslip/${global.xx_emp_id}/${period_id}`);
+        const response = await fetch(`https://dwpcare.com.pk/azgard/payslip/${global.xx_emp_id}/${period_id}`);
         const data = await response.json();
         setPayslipData(data);
         console.log(data);

@@ -8,6 +8,7 @@ import DocumentPicker from 'react-native-document-picker';
 import { Dropdown } from 'react-native-element-dropdown';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Install this for icons
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 
   const UpdateFamilyAdd = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -127,7 +128,7 @@ import moment from 'moment';
       try {
         setLoading(true);
         const response = await fetch(
-          `http://hcm-azgard9.azgard9.com:8444/ords/api/emp_update/get`
+          `${BASEURL}/ords/api/emp_update/get`
         );
         const data = await response.json();
         setLeavHistory(data.family_update);
@@ -160,7 +161,7 @@ import moment from 'moment';
 
   console.log(formData);
     try {
-        const response = await axios.post('http://hcm-azgard9.azgard9.com:8444/ords/api/family/insert', formData, {
+        const response = await axios.post(`${BASEURL}/ords/api/family/insert`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

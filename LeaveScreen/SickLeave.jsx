@@ -9,6 +9,7 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import DocumentPicker from 'react-native-document-picker'; 
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Install this for icons
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
   const SickLeave = () => {
   const [leaveSummary, setLeaveSummary] = useState(null);
   const [value, setValue] = useState('2');
@@ -93,7 +94,7 @@ import moment from 'moment';
   const fetchLeaveRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://hcm-azgard9.azgard9.com:8444/ords/api/history/az?EMP_ID=${global.xx_emp_id}`);
+      const response = await fetch(`${BASEURL}/ords/api/history/az?EMP_ID=${global.xx_emp_id}`);
       const data = await response.json();
      
       setLeavHistory(data.leave_history);
@@ -112,7 +113,7 @@ import moment from 'moment';
   
   useEffect(() => {
 // Fetch data from first API
-fetch(`http://hcm-azgard9.azgard9.com:8444/ords/api/summary/az?EMP_ID=${global.xx_emp_id}`)
+fetch(`${BASEURL}/ords/api/summary/az?EMP_ID=${global.xx_emp_id}`)
 .then((response) => {
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -222,7 +223,7 @@ const handleFileUpload = async () => {
   try {
       // Upload leave request
       const response = await axios.post(
-          'http://hcm-azgard9.azgard9.com:8444/ords/api/leave/insertLeave',
+          `${BASEURL}/ords/api/leave/insertLeave`,
           formData,
           {
               headers: { 'Content-Type': 'multipart/form-data' },
@@ -246,7 +247,7 @@ const handleFileUpload = async () => {
         };
   
         await axios.post(
-          'http://hcm-azgard9.azgard9.com:8444azgard/send-notification',
+          'https://dwpcare.com.pk/azgard/send-notification',
           notificationPayload,
           { headers: { 'Content-Type': 'application/json' } }
         );

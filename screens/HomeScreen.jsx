@@ -16,6 +16,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASEURL from '../Constants/BaseUrl';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -71,7 +72,7 @@ const HomeScreen = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/Pending/Approval?SUP_ID=${emp_id}`,
+        `${BASEURL}/ords/api/Pending/Approval?SUP_ID=${emp_id}`,
       );
       const data = await response.json();
       console.log("data" ,data)

@@ -15,6 +15,7 @@ import numeral from 'numeral';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 const LoanRequest = () => {
   const getCurrentMonthLastDay = () => {
     const now = new Date();
@@ -90,8 +91,9 @@ const LoanRequest = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
       );
+      console.log(global.xx_emp_id)
       const data = await response.json();
       setLeavHistory(data.loan);
     } catch (error) {
@@ -167,7 +169,7 @@ const LoanRequest = () => {
 
     try {
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/add/insert',
+        `${BASEURL}/ords/api/add/insert`,
         requestData,
         {
           headers: {

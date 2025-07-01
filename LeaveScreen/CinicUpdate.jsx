@@ -17,6 +17,7 @@ import DocumentPicker from 'react-native-document-picker';
 import CheckBox from 'react-native-check-box';// Install this for the checkbox
 import Icon from 'react-native-vector-icons/FontAwesome'; // Install this for icons
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 
 const CNICUpdate = () => {
   const [fromDate, setFromDate] = useState(new Date());
@@ -72,7 +73,7 @@ const CNICUpdate = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/emp_update/get`
+        `${BASEURL}/ords/api/emp_update/get`
       );
       const data = await response.json();
       setLeavHistory(data.cinic_update);
@@ -117,9 +118,11 @@ const CNICUpdate = () => {
        name: selectedFile.name,
     });
 
+console.log("CNINC UPDATE DATA",formData)
+
     try {
       const response = await axios.post(
-        'http://hcm-azgard9.azgard9.com:8444/ords/api/updateemp/post',
+        `${BASEURL}/ords/api/updateemp/post`,
         formData,
         {
           headers: {

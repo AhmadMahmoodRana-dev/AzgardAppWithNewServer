@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import BASEURL from '../Constants/BaseUrl';
 
 const ApprovalsScreen = ({navigation}) => {
   const [data, setData] = useState([
@@ -36,7 +37,7 @@ const ApprovalsScreen = ({navigation}) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/Pending/Approval?SUP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/Pending/Approval?SUP_ID=${global.xx_emp_id}`,
       );
       const json = await response.json();
       console.log('Fetched Data:', json);

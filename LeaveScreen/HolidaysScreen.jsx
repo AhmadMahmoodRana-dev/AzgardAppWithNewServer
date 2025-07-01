@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
+import BASEURL from '../Constants/BaseUrl';
 
 const HolidaysScreen = () => {
   const [holidays, setHolidays] = useState([]);
@@ -18,7 +19,7 @@ const HolidaysScreen = () => {
   useEffect(() => {
     const fetchHolidays = async () => {
       try {
-        const response = await axios.get('http://hcm-azgard9.azgard9.com:8444/ords/api/holidays/get');
+        const response = await axios.get(`${BASEURL}/ords/api/holidays/get`);
         setHolidays(response.data.gazeted_holidays); // Assuming the response is an array of holidays
         setLoading(false);
       } catch (error) {

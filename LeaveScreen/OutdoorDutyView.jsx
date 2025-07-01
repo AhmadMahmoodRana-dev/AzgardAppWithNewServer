@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet, Alert, ImageBackground } from 'react-native';
+import BASEURL from '../Constants/BaseUrl';
 
 const OutdoorDutyView = ({navigation}) => {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -21,7 +22,7 @@ const OutdoorDutyView = ({navigation}) => {
   const fetchLeaveRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://hcm-azgard9.azgard9.com:8444/ords/api/outdoorDuty/getdata`);
+      const response = await fetch(`${BASEURL}/ords/api/outdoorDuty/getdata`);
       const data = await response.json();
       setLeaveRequests(data.outdoor_duty);
     } catch (error) {
@@ -34,7 +35,7 @@ const OutdoorDutyView = ({navigation}) => {
   const approveRequest = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://hcm-azgard9.azgard9.com:8444/ords/api/api/update?LEAVE_ID=${id}`, {
+      const response = await fetch(`${BASEURL}/ords/api/api/update?LEAVE_ID=${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

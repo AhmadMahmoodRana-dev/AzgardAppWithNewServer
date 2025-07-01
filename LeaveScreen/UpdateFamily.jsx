@@ -10,6 +10,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import BASEURL from '../Constants/BaseUrl';
  // Make sure you install react-native-vector-icons or expo/vector-icons
 
 const   UpdateFamily = ({navigation}) => {
@@ -48,7 +49,7 @@ const   UpdateFamily = ({navigation}) => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://hcm-azgard9.azgard9.com:8444/ords/api/emp_update/get`
+        `${BASEURL}/ords/api/emp_update/get`
       );
       const data = await response.json();
       setLeaveRequests(data.family_update);
