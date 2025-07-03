@@ -34,13 +34,6 @@ const LoanRequest = () => {
 
   const [fromDate, setFromDate] = useState(new Date());
 
-  const [showFromDatePicker, setShowFromDatePicker] = useState(false);
-  const getLastDayOfMonth = date => {
-    const tempDate = new Date(date);
-    tempDate.setMonth(tempDate.getMonth() + 1, 0);
-    return tempDate;
-  };
-
   useEffect(() => {
     if (loanAmount && duration) {
       const principal = parseFloat(loanAmount);
@@ -93,7 +86,7 @@ const LoanRequest = () => {
       const response = await fetch(
         `${BASEURL}/ords/api/adv/get?EMP_ID=${global.xx_emp_id}`,
       );
-      console.log(global.xx_emp_id)
+      console.log(global.xx_emp_id);
       const data = await response.json();
       setLeavHistory(data.loan);
     } catch (error) {
@@ -107,50 +100,6 @@ const LoanRequest = () => {
     fetchLeaveRequests();
   }, []);
 
-  const handleDateChange = (event, selectedDate, type) => {
-    if (type === 'from') {
-      setShowFromDatePicker(false);
-      if (selectedDate) {
-        setFromDate(selectedDate);
-      }
-    }
-  };
-
-  const generateSchedule = () => {
-    const principal = parseFloat(loanAmount);
-    const months = parseInt(duration);
-
-    if (!principal || !months || !fromDate || isNaN(months)) {
-      Alert.alert(
-        'Error',
-        'Please fill out all fields correctly with valid numbers!',
-      );
-      return;
-    }
-
-    const monthlyPayment = principal / months;
-    let date = new Date(fromDate);
-    const paymentSchedule = [];
-    let balance = principal;
-
-    for (let i = 0; i < months; i++) {
-      date = getLastDayOfMonth(date);
-      balance -= monthlyPayment;
-
-      paymentSchedule.push({
-        month: `Month ${i + 1}`,
-        dueDate: date.toISOString().split('T')[0],
-        installment: monthlyPayment.toFixed(2),
-        balance: balance > 0 ? balance.toFixed(2) : '0.00',
-      });
-
-      date.setDate(1);
-      date.setMonth(date.getMonth() + 1);
-    }
-
-    setSchedule(paymentSchedule);
-  };
-
   const sendLoanRequest = async () => {
     if (!loanAmount || !duration || !startDate) {
       Alert.alert('Error', 'Please Enter Loan Amount & Duration');
@@ -160,13 +109,14 @@ const LoanRequest = () => {
     const requestData = {
       loanAmount: parseFloat(loanAmount),
       duration: parseInt(duration),
-      fromDate,
+      fromDate:formatDate(fromDate),
       totalPayable,
       monthlyInstallment,
       EMP_ID: global.xx_emp_id,
       schedule,
     };
 
+    console.log('Request Dataaaa:', requestData);
     try {
       const response = await axios.post(
         `${BASEURL}/ords/api/add/insert`,
@@ -212,6 +162,7 @@ const LoanRequest = () => {
             <TextInput
               style={styles.input}
               placeholder="Loan Amount"
+              placeholderTextColor={'#888'}
               keyboardType="numeric"
               value={loanAmount}
               onChangeText={setLoanAmount}
@@ -219,28 +170,27 @@ const LoanRequest = () => {
             <TextInput
               style={styles.input}
               placeholder="Loan Duration (months)"
+              placeholderTextColor={'#888'}
               keyboardType="numeric"
               value={duration.toString()}
               onChangeText={value => {
-                const parsedValue = parseInt(value);
-                if (!isNaN(parsedValue) && parsedValue > 0) {
-                  setDuration(parsedValue);
-                } else if (value === '') {
+                if (value === '') {
                   setDuration('');
+                } else {
+                  const cleanedValue = value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+                  const parsedValue = parseInt(cleanedValue, 10);
+
+                  if (!isNaN(parsedValue)) {
+                    if (parsedValue > 12) {
+                      setDuration(12); // Cap value at 12
+                    } else if (parsedValue > 0) {
+                      setDuration(parsedValue); // Allow valid values (1-12)
+                    }
+                  }
                 }
               }}
             />
-            {/* <TextInput
-        style={styles.input}
-        placeholder="Start Date (YYYY-MM-DD)"
-        keyboardType="default"
-        value={startDate}
-        onChangeText={setStartDate}
-      /> */}
-
-            <TouchableOpacity
-              onPress={() => setShowFromDatePicker(true)}
-              style={styles.datePicker}>
+            <View style={styles.datePicker}>
               <Text>Loan Date: {moment(fromDate).format('DD-MMM-YYYY')}</Text>
               <Icon
                 name="calendar"
@@ -248,54 +198,28 @@ const LoanRequest = () => {
                 color="#666"
                 style={styles.icon}
               />
-            </TouchableOpacity>
-            {showFromDatePicker && (
-              <DateTimePicker
-                value={fromDate}
-                mode="date"
-                display="default"
-                onChange={(event, date) =>
-                  handleDateChange(event, date, 'from')
-                }
-              />
-            )}
+            </View>
+
             <TextInput
               style={[styles.input, styles.readOnlyInput]}
               placeholder="Total Payable"
+              placeholderTextColor={'#888'}
               value={totalPayable}
               editable={false}
             />
             <TextInput
               style={[styles.input, styles.readOnlyInput]}
               placeholder="Monthly Installment"
+              placeholderTextColor={'#888'}
               value={monthlyInstallment}
               editable={false}
             />
-            {/* <View style={styles.buttonRow}> */}
-            {/* <View style={styles.button}>
-    <Text style={styles.buttonText} onPress={generateSchedule}>
-      Generate Schedule
-    </Text>
-  </View> */}
-            <View style={styles.button}>
-              <Text style={styles.buttonText} onPress={sendLoanRequest}>
+
+            <TouchableOpacity onPress={sendLoanRequest} style={styles.button}>
+              <Text style={styles.buttonText}>
                 Submit Loan Request
               </Text>
-            </View>
-            {/* </View> */}
-            {schedule.length > 0 && (
-              <ScrollView style={styles.scheduleContainer}>
-                <Text style={styles.scheduleTitle}>Payment Schedule</Text>
-                {schedule.map((item, index) => (
-                  <View key={index} style={styles.scheduleItem}>
-                    <Text>{item.month}</Text>
-                    <Text>Due Date: {item.dueDate}</Text>
-                    <Text>Installment: {item.installment}</Text>
-                    <Text>Balance: {item.balance}</Text>
-                  </View>
-                ))}
-              </ScrollView>
-            )}
+            </TouchableOpacity>
           </View>
 
           <View style={styles.containerdropdown}>

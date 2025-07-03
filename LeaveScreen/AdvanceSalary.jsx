@@ -94,121 +94,129 @@ const AdvanceSalary = () => {
   };
 
   // Handle file upload
-//   const handleFileUpload = async () => {
-//   if (!amount || !remarks || !value || !global.xx_user_id || !global.xx_emp_id) {
-//     Alert.alert('Validation Error', 'Please fill all required fields.');
-//     return;
-//   }
+  //   const handleFileUpload = async () => {
+  //   if (!amount || !remarks || !value || !global.xx_user_id || !global.xx_emp_id) {
+  //     Alert.alert('Validation Error', 'Please fill all required fields.');
+  //     return;
+  //   }
 
-//   const formData = new FormData();
-//   formData.append('AMOUNT', amount);
-//   formData.append('ADVANCE_DATE', moment(fromDate).format('DD-MMM-YY'));
-//   formData.append('REMARKS', remarks);
-//   formData.append('CREATED_BY', global.xx_user_id);
-//   formData.append('BANK_ID', value);
-//   formData.append('EMP_ID', global.xx_emp_id);
+  //   const formData = new FormData();
+  //   formData.append('AMOUNT', amount);
+  //   formData.append('ADVANCE_DATE', moment(fromDate).format('DD-MMM-YY'));
+  //   formData.append('REMARKS', remarks);
+  //   formData.append('CREATED_BY', global.xx_user_id);
+  //   formData.append('BANK_ID', value);
+  //   formData.append('EMP_ID', global.xx_emp_id);
 
-//   console.log('FormData being sent:');
-//   for (let pair of formData.entries()) {
-//     console.log(`${pair[0]}: ${pair[1]}`);
-//   }
+  //   console.log('FormData being sent:');
+  //   for (let pair of formData.entries()) {
+  //     console.log(`${pair[0]}: ${pair[1]}`);
+  //   }
 
-//   try {
-//     console.log("Calling API...");
+  //   try {
+  //     console.log("Calling API...");
 
-//     const response = await axios.post(
-//       'https://erp.visionplusapps.com:8081/ords/api/salary/insert',
-//       formData,
-//       {
-//         headers: {
-//           // DO NOT manually set content-type for FormData
-//           Accept: 'application/json',
-//         },
-//       }
-//     );
+  //     const response = await axios.post(
+  //       'https://erp.visionplusapps.com:8081/ords/api/salary/insert',
+  //       formData,
+  //       {
+  //         headers: {
+  //           // DO NOT manually set content-type for FormData
+  //           Accept: 'application/json',
+  //         },
+  //       }
+  //     );
 
-//     console.log("API response:", response?.data);
+  //     console.log("API response:", response?.data);
 
-//     if (response?.data && response.data.STATUS === 'SUCCESS') {
-//       Alert.alert('Success', 'Record added successfully!');
-//     } else {
-//       Alert.alert('Failed', response?.data?.MESSAGE || 'Failed to add record');
-//     }
+  //     if (response?.data && response.data.STATUS === 'SUCCESS') {
+  //       Alert.alert('Success', 'Record added successfully!');
+  //     } else {
+  //       Alert.alert('Failed', response?.data?.MESSAGE || 'Failed to add record');
+  //     }
 
-//   } catch (error) {
-//     console.log("Upload error:", error?.response?.data || error.message);
-//     Alert.alert('Upload Error', error?.message || 'Something went wrong');
-//   }
-// };
+  //   } catch (error) {
+  //     console.log("Upload error:", error?.response?.data || error.message);
+  //     Alert.alert('Upload Error', error?.message || 'Something went wrong');
+  //   }
+  // };
 
-
-const handleFileUpload = async () => {
-  if (!amount || !remarks || !value || !global.xx_user_id || !global.xx_emp_id) {
-    Alert.alert('Validation Error', 'Please fill all required fields.');
-    return;
-  }
-
-  const advanceDate = moment(fromDate).format('DD-MMM-YY');
-  
-  // Log values directly instead of using FormData entries
-  console.log('Submitting with:');
-  console.log('AMOUNT:', amount);
-  console.log('ADVANCE_DATE:', advanceDate);
-  console.log('REMARKS:', remarks);
-  console.log('CREATED_BY:', global.xx_user_id);
-  console.log('BANK_ID:', value);
-  console.log('EMP_ID:', global.xx_emp_id);
-
-  const formData = new FormData();
-  formData.append('AMOUNT', amount);
-  formData.append('ADVANCE_DATE', advanceDate);
-  formData.append('REMARKS', remarks);
-  formData.append('CREATED_BY', global.xx_user_id);
-  formData.append('BANK_ID', value);
-  formData.append('EMP_ID', global.xx_emp_id);
-
-  try {
-    console.log("Calling API...");
-    const response = await axios.post(
-      `${BASEURL}/ords/api/salary/insert`,
-      formData,
-      {
-        headers: { Accept: 'application/json' },
-        timeout: 10000, // 10-second timeout
-      }
-    );
-
-    console.log("API response:", response?.data);
-
-    if (response?.data?.STATUS === 'SUCCESS') {
-      Alert.alert('Success', 'Record added successfully!');
-      // Refresh history after successful submission
-      fetchLeaveRequests();
-    } else {
-      Alert.alert('Failed', response?.data?.MESSAGE || 'Unknown error occurred');
+  const handleFileUpload = async () => {
+    if (
+      !amount ||
+      !remarks ||
+      !value ||
+      !global.xx_user_id ||
+      !global.xx_emp_id
+    ) {
+      Alert.alert('Validation Error', 'Please fill all required fields.');
+      return;
     }
-  } catch (error) {
-    console.log("Full error object:", error);
-    
-    if (error.response) {
-      // Server responded with error status (4xx/5xx)
-      console.log("Response data:", error.response.data);
-      console.log("Status code:", error.response.status);
-      Alert.alert(
-        'Server Error', 
-        error.response.data?.MESSAGE || `Error ${error.response.status}`
+
+    const advanceDate = moment(fromDate).format('DD-MMM-YY');
+
+    // Log values directly instead of using FormData entries
+    console.log('Submitting with:');
+    console.log('AMOUNT:', amount);
+    console.log('ADVANCE_DATE:', advanceDate);
+    console.log('REMARKS:', remarks);
+    console.log('CREATED_BY:', global.xx_user_id);
+    console.log('BANK_ID:', value);
+    console.log('EMP_ID:', global.xx_emp_id);
+
+    const formData = new FormData();
+    formData.append('AMOUNT', amount);
+    formData.append('ADVANCE_DATE', advanceDate);
+    formData.append('REMARKS', remarks);
+    formData.append('CREATED_BY', global.xx_user_id);
+    formData.append('BANK_ID', value);
+    formData.append('EMP_ID', global.xx_emp_id);
+
+    try {
+      console.log('Calling API...');
+      const response = await axios.post(
+        `${BASEURL}/ords/api/salary/insert`,
+        formData,
+        {
+          headers: {Accept: 'application/json'},
+          timeout: 10000, // 10-second timeout
+        },
       );
-    } else if (error.request) {
-      // Request was made but no response received
-      console.log("No response received:", error.request);
-      Alert.alert('Network Error', 'No response from server');
-    } else {
-      // Other errors (e.g., timeout)
-      console.log("Request error:", error.message);
-      Alert.alert('Error', error.message || 'Request failed');
+
+      console.log('API response:', response?.data);
+
+      if (response?.data?.STATUS === 'SUCCESS') {
+        Alert.alert('Success', 'Record added successfully!');
+        // Refresh history after successful submission
+        fetchLeaveRequests();
+      } else {
+        Alert.alert(
+          'Failed',
+          response?.data?.MESSAGE || 'Unknown error occurred',
+        );
+      }
+    } catch (error) {
+      console.log('Full error object:', error);
+
+      if (error.response) {
+        // Server responded with error status (4xx/5xx)
+        console.log('Response data:', error.response.data);
+        console.log('Status code:', error.response.status);
+        Alert.alert(
+          'Server Error',
+          error.response.data?.MESSAGE || `Error ${error.response.status}`,
+        );
+      } else if (error.request) {
+        // Request was made but no response received
+        console.log('No response received:', error.request);
+        Alert.alert('Network Error', 'No response from server');
+      } else {
+        // Other errors (e.g., timeout)
+        console.log('Request error:', error.message);
+        Alert.alert('Error', error.message || 'Request failed');
+      }
     }
-  }
-};
+  };
 
   return (
     <SafeAreaProvider>
@@ -262,6 +270,7 @@ const handleFileUpload = async () => {
                 style={styles.input}
                 placeholder="Remarks"
                 keyboardType="default"
+                placeholderTextColor={'#888'}
                 value={remarks}
                 onChangeText={setRemrks}
               />
@@ -271,6 +280,7 @@ const handleFileUpload = async () => {
               <TextInput
                 style={styles.input}
                 placeholder="Enter Amount"
+                placeholderTextColor={'#888'}
                 keyboardType="numeric"
                 value={amount}
                 onChangeText={setAmount}
@@ -282,7 +292,7 @@ const handleFileUpload = async () => {
                   style={styles.uploadButton}
                   onPress={() => {
                     handleFileUpload();
-                    console.log("press")
+                    console.log('press');
                   }}>
                   <Text>Save</Text>
                 </Pressable>

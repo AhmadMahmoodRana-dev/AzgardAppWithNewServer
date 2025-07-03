@@ -73,7 +73,7 @@ const CNICUpdate = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASEURL}/ords/api/emp_update/get`
+        `${BASEURL}/ords/api/emp_update/get?p_user_id=${global.xx_user_id}`
       );
       const data = await response.json();
       setLeavHistory(data.cinic_update);
@@ -217,9 +217,11 @@ console.log("CNINC UPDATE DATA",formData)
                     <View style={styles.historyItem} key={item.EMP_INFO_ID.toString()}>
                     
                           <Text style={styles.text}>
-                            Emp No :{item.EMP_NO} Name: {item.EMP_NAME}
+                            Emp No :{item.EMP_NO}
                           </Text>
-                          <Text style={styles.text}>Card No: {item.CARD_ID}</Text>
+                          <Text style={styles.text}>
+                           Name: {item.EMP_NAME}
+                          </Text>
                           <Text style={styles.text}>
                             Cninc Issue Date: {formatDate(item.CNIC_ISSUE_DATE)}
                           </Text>
