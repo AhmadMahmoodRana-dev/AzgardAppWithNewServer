@@ -429,12 +429,14 @@ const handleFileUpload = async () => {
           <Icon name="date-range" size={20} color="#333" style={styles.icon} />
         </TouchableOpacity>
 
-        <TextInput style={styles.input} placeholder="No of Days" 
+        <TextInput style={styles.input1} placeholder="No of Days" 
         keyboardType="numeric" 
         value={noOfDays}
         onChangeText={setNoOfDays}
+        editable={false}
         />
-        <TextInput style={styles.input} placeholder="Due To" 
+        <TextInput style={styles.input} placeholder="Enter your remarks"
+        placeholderTextColor={'#888'} 
         keyboardType="default" 
         value={dueTo}
         onChangeText={setDueTo}
@@ -632,6 +634,15 @@ containerdropdown: {
     backgroundColor: '#FFF',
     elevation: 5,
     },
+    input1: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    backgroundColor: '#ededed',
+    elevation: 5,
+  },
     datePicker: {
       flexDirection: 'row',
       justifyContent: 'space-between',

@@ -26,7 +26,7 @@ const CasualLeave = () => {
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
   const [dueTo, setDueTo] = useState('');
-  const [noOfDays, setNoOfDays] = useState('');
+  const [noOfDays, setNoOfDays] = useState('1');
   const [selectedFile, setSelectedFile] = useState(null);
   const [leavHistory, setLeavHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -344,15 +344,17 @@ const CasualLeave = () => {
             </TouchableOpacity>
 
             <TextInput
-              style={styles.input}
+              style={styles.input1}
               placeholder="No of Days"
               keyboardType="numeric"
               value={noOfDays}
+              editable={false} 
               onChangeText={setNoOfDays}
             />
             <TextInput
               style={styles.input}
-              placeholder="Due To"
+              placeholder="Enter your remarks"
+              placeholderTextColor={'#888'}
               keyboardType="default"
               value={dueTo}
               onChangeText={setDueTo}
@@ -546,6 +548,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 8,
     backgroundColor: '#FFF',
+    elevation: 5,
+  },
+  input1: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    backgroundColor: '#ededed',
     elevation: 5,
   },
   datePicker: {
