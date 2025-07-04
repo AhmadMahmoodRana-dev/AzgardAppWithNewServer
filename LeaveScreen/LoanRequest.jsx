@@ -131,6 +131,7 @@ const LoanRequest = () => {
       if (response.status === 200) {
         console.log('Response Data:', response.data);
         Alert.alert('Success', 'Loan submitted successfully!');
+        fetchLeaveRequests(); // Refresh the request history
         setLoanAmount('');
         setDuration('');
       } else {
@@ -232,13 +233,16 @@ const LoanRequest = () => {
                 <View style={styles.historyItem} key={item.LOAN_ID.toString()}>
                   <Text style={styles.text}>Requset #: {item.LOAN_NO}</Text>
                   <Text style={styles.text}>
-                    Requset Date: {formatDate(item.LOAN_START_DATE)}{' '}
+                    Requset Date: {formatDate(item.CREATION_DATE)}{' '}
                   </Text>
                   <Text style={styles.text}>
-                    No Of Installment: {item.PER_MONTH_INSTALMENT}
+                   Loan Amount :{formatAmount(item.LOAN_AMOUNT)}
                   </Text>
                   <Text style={styles.text}>
-                    Amount :{formatAmount(item.LOAN_AMOUNT)}
+                    Per Month Installment: {item.PER_MONTH_INSTALMENT}
+                  </Text>
+                  <Text style={styles.text}>
+                    No Of Installments: {formatAmount( item.LOAN_AMOUNT / item.PER_MONTH_INSTALMENT)}
                   </Text>
                 </View>
               ))

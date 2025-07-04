@@ -146,49 +146,58 @@ const AdvanceSalary = () => {
       !amount ||
       !remarks ||
       !value ||
-      !global.xx_user_id ||
       !global.xx_emp_id
     ) {
       Alert.alert('Validation Error', 'Please fill all required fields.');
       return;
     }
 
-    const advanceDate = moment(fromDate).format('DD-MMM-YY');
+    // const advanceDate = moment(fromDate).format('DD-MMM-YY');
 
     // Log values directly instead of using FormData entries
-    console.log('Submitting with:');
-    console.log('AMOUNT:', amount);
-    console.log('ADVANCE_DATE:', advanceDate);
-    console.log('REMARKS:', remarks);
-    console.log('CREATED_BY:', global.xx_user_id);
-    console.log('BANK_ID:', value);
-    console.log('EMP_ID:', global.xx_emp_id);
+    // console.log('Submitting with:');
+    // console.log('AMOUNT:', amount);
+    // console.log('ADVANCE_DATE:', advanceDate);
+    // console.log('REMARKS:', remarks);
+    // console.log('CREATED_BY:', global.xx_user_id);
+    // console.log('BANK_ID:', value);
+    // console.log('EMP_ID:', global.xx_emp_id);
 
-    const formData = new FormData();
-    formData.append('AMOUNT', amount);
-    formData.append('ADVANCE_DATE', advanceDate);
-    formData.append('REMARKS', remarks);
-    formData.append('CREATED_BY', global.xx_user_id);
-    formData.append('BANK_ID', value);
-    formData.append('EMP_ID', global.xx_emp_id);
+    // const formData = new FormData();
+    // formData.append('AMOUNT', amount);
+    // formData.append('ADVANCE_DATE', advanceDate);
+    // formData.append('REMARKS', remarks);
+    // formData.append('CREATED_BY', global.xx_user_id);
+    // formData.append('BANK_ID', value);
+    // formData.append('EMP_ID', global.xx_emp_id);
 
     try {
       console.log('Calling API...');
       const response = await axios.post(
         `${BASEURL}/ords/api/salary/insert`,
-        formData,
+        {
+          AMOUNT: amount,
+          ADVANCE_DATE: moment(fromDate).format('DD-MMM-YY'),
+          REMARKS: remarks,
+          BANK_ID: value,
+          EMP_ID: global.xx_emp_id,
+        },
         {
           headers: {Accept: 'application/json'},
-          timeout: 10000, // 10-second timeout
+          timeout: 10000,
         },
       );
 
       console.log('API response:', response?.data);
 
-      if (response?.data?.STATUS === 'SUCCESS') {
+      if (response) {
         Alert.alert('Success', 'Record added successfully!');
         // Refresh history after successful submission
         fetchLeaveRequests();
+        setAmount('');
+        setRemrks('');
+        setFromDate(new Date());
+        
       } else {
         Alert.alert(
           'Failed',
