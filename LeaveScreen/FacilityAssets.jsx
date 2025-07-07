@@ -157,6 +157,7 @@ const FacilityAssets = () => {
         ) : (
           <TextInput
             placeholder="Brand"
+            placeholderTextColor={"#888"}
             style={styles.input}
             value={newRequest.brand}
             onChangeText={text => setNewRequest({...newRequest, brand: text})}

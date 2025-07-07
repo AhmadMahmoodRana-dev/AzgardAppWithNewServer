@@ -15,16 +15,20 @@ const ApprovalsScreen = ({navigation}) => {
   const [data, setData] = useState([
     {id: '1', title: 'Leaves', icon: 'file-document-outline', approval: 0},
     {id: '2', title: 'Loans', icon: 'file-multiple-outline', approval: 0},
-    {id: '3', title: 'Budget', icon: 'finance', approval: 0},
-    {id: '4', title: 'Vehicle', icon: 'car', approval: 0},
-    {id: '5', title: 'SIM', icon: 'sim', approval: 0},
+    {id: '3', title: 'Advance',icon: 'file-multiple-outline', approval: 0},
+    {id: '4', title: 'OverTime',icon: 'file-multiple-outline', approval: 0},
+    {id: '5', title: 'Vehicle', icon: 'car', approval: 0},
     {id: '6', title: 'Laptop', icon: 'laptop', approval: 0},
-    {
-      id: '7',
-      title: 'Interview Assessment',
-      icon: 'file-multiple-outline',
-      approval: 0,
-    },
+    {id: '7', title: 'SIM', icon: 'sim', approval: 0},
+    {id: '8', title: 'Promotion/Salary Changes',icon: 'file-multiple-outline', approval: 0},
+    {id: '9', title: 'Transfer',icon: 'file-multiple-outline', approval: 0},
+    {id: '10', title: 'Probation',icon: 'file-multiple-outline', approval: 0},
+    {id: '11', title: 'Interview Assessment',icon: 'file-multiple-outline', approval: 0},
+    {id: '12', title: 'Appraisal',icon: 'file-multiple-outline', approval: 0},
+    {id: '13', title: 'Travelling',icon: 'file-multiple-outline', approval: 0},
+    {id: '14', title: 'Budget', icon: 'finance', approval: 0},
+    {id: '15', title: 'Trail Slip',icon: 'file-multiple-outline', approval: 0},
+
   ]);
 
   const [loading, setLoading] = useState(false);
