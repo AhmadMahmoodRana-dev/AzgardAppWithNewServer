@@ -1,14 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet,
-  Alert,
-  ImageBackground,
-} from 'react-native';
+import {View,Text,FlatList,TouchableOpacity,ActivityIndicator,StyleSheet,Alert,ImageBackground} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import numeral from 'numeral';
 import BASEURL from '../Constants/BaseUrl';

@@ -332,6 +332,7 @@ function LoginScreen({navigation}) {
         global.xx_supervisor_id = currentUser.supervisor_id;
         // if (currentUser.user_notification === '0') {
         saveTokenToServer(currentUser.emp_id);
+        console.log('Token saved to server:', currentUser.user_id);
         //         // }
         navigation.navigate('Home');
       } else {

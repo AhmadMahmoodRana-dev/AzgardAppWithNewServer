@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {View,Text,FlatList,TouchableOpacity,ActivityIndicator,StyleSheet,Alert,ImageBackground} from 'react-native';
 import BASEURL from '../Constants/BaseUrl';
-import axios from 'axios';
 
-const LeaveApprovalEntry = () => {
+const ShowVehicleApprovalEntry = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -38,10 +37,9 @@ const LeaveApprovalEntry = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASEURL}/ords/api/Get_leave_Approval/get?X_EMP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/az/get?SUP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
-      console.log('Leave Requestsss:', data);
       setLeaveRequests(data.leave_approval);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch leave requests');
@@ -50,10 +48,10 @@ const LeaveApprovalEntry = () => {
     }
   };
 
-   const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
+  const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
       const response = await fetch(
-        'https://dwpcare.com.pk/azgard/send-approval-notification',
+        `${BASEURL}/send-approval-notification`,
         {
           method: 'POST',
           headers: {
@@ -68,7 +66,6 @@ const LeaveApprovalEntry = () => {
         },
       );
 
-      console.log('Notification Response:', response);
       if (!response.ok) {
         throw new Error('Failed to send notification');
       }
@@ -77,42 +74,36 @@ const LeaveApprovalEntry = () => {
     }
   };
 
+  const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
+    try {
+      setLoading(true);
+      const L_STATUS = 'APPROVED';
+      const response = await fetch(
+        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({status: 'approved'}),
+        },
+      );
 
-const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
-  try {
-    setLoading(true);
+      console.log('Response:', response);
 
-    const L_STATUS = 'APPROVED';
-
-    const formData = new FormData();
-    formData.append('p_leave_id', id.toString());
-    formData.append('L_TYPE', TYPE);
-    formData.append('L_STATUS', L_STATUS);
-    formData.append('USER_ID', global.xx_user_id?.toString());
-
-    const response = await axios.put(`${BASEURL}/ords/api/PUT_LEAVE/UPDATE`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    console.log('Response:', response.data);
-
-    if (response) {
-      await sendNotification(empId, leaveType, noOfDays, L_STATUS);
-      Alert.alert('Success', 'Leave approved successfully');
-      fetchLeaveRequests();
-    } else {
+      if (response.ok) {
+        await sendNotification(empId, leaveType, noOfDays, L_STATUS);
+        Alert.alert('Success', 'Leave approved successfully');
+        fetchLeaveRequests();
+      } else {
+        Alert.alert('Error', 'Failed to approve leave request');
+      }
+    } catch (error) {
       Alert.alert('Error', 'Failed to approve leave request');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Approval Error:', error);
-    Alert.alert('Error', 'Failed to approve leave request');
-  } finally {
-    setLoading(false);
-  }
-};
-;
+  };
 
   const rejectRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
@@ -255,4 +246,4 @@ const styles = StyleSheet.create({
   emptyText: {textAlign: 'center', fontSize: 16, color: '#fff'},
 });
 
-export default LeaveApprovalEntry;
+export default ShowVehicleApprovalEntry;

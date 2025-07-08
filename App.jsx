@@ -33,6 +33,20 @@ import AttendanceLog from './screens/AttendanceLog';
 
 import React from 'react';
 import {StyleSheet} from 'react-native';
+import ShowLoanApprovalEntry from './ApprovalScreens/ShowLoanApprovalEntry';
+import ShowAdvanceApprovalEntry from './ApprovalScreens/ShowAdvanceApprovalEntry';
+import ShowOvertimeApprovalEntry from './ApprovalScreens/ShowOvertimeApprovalEntry';
+import ShowVehicleApprovalEntry from './ApprovalScreens/ShowVehicleApprovalEntry';
+import ShowLaptopApprovalEntry from './ApprovalScreens/ShowLaptopApprovalEntry';
+import ShowSimApprovalEntry from './ApprovalScreens/ShowSimApprovalEntry';
+import ShowSalaryChangesApprovalEntry from './ApprovalScreens/ShowSalaryChangesApprovalEntry';
+import ShowTransferApprovalEntry from './ApprovalScreens/ShowTransferApprovalEntry';
+import ShowProbationApprovalEntry from './ApprovalScreens/ShowProbationApprovalEntry';
+import ShowInterviewAssesmentApprovalEntry from './ApprovalScreens/ShowInterviewAssesmentApprovalEntry';
+import ShowAppraisalApprovalEntry from './ApprovalScreens/ShowAppraisalApprovalEntry';
+import ShowTravellingApprovalEntry from './ApprovalScreens/ShowTravellingApprovalEntry';
+import ShowBudgetApprovalEntry from './ApprovalScreens/ShowBudgetApprovalEntry';
+import ShowTrailSlipApprovalEntry from './ApprovalScreens/ShowTrailSlipApprovalEntry';
 
 const Stack = createStackNavigator();
 
@@ -223,6 +237,76 @@ const App = () => {
           name="LeaveApprovalEntry"
           component={LeaveApprovalEntry}
           options={{title: 'My Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowLoanApprovalEntry"
+          component={ShowLoanApprovalEntry}
+          options={{title: 'My Loan Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowAdvanceApprovalEntry"
+          component={ShowAdvanceApprovalEntry}
+          options={{title: 'My Advance Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowOvertimeApprovalEntry"
+          component={ShowOvertimeApprovalEntry}
+          options={{title: 'My Overtime Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowVehicleApprovalEntry"
+          component={ShowVehicleApprovalEntry}
+          options={{title: 'My Vehicle Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowLaptopApprovalEntry"
+          component={ShowLaptopApprovalEntry}
+          options={{title: 'My Laptop Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowSimApprovalEntry"
+          component={ShowSimApprovalEntry}
+          options={{title: 'My Sim Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowSalaryChangesApprovalEntry"
+          component={ShowSalaryChangesApprovalEntry}
+          options={{title: 'My Promotion/Salary Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowTransferApprovalEntry"
+          component={ShowTransferApprovalEntry}
+          options={{title: 'My Transfer Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowProbationApprovalEntry"
+          component={ShowProbationApprovalEntry}
+          options={{title: 'My Probation Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowInterviewAssesmentApprovalEntry"
+          component={ShowInterviewAssesmentApprovalEntry}
+          options={{title: 'My Interview Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowAppraisalApprovalEntry"
+          component={ShowAppraisalApprovalEntry}
+          options={{title: 'My Appraisal Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowTravellingApprovalEntry"
+          component={ShowTravellingApprovalEntry}
+          options={{title: 'My Travelling Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowBudgetApprovalEntry"
+          component={ShowBudgetApprovalEntry}
+          options={{title: 'My Budget Approvals'}}
+        />
+        <Stack.Screen
+          name="ShowTrailSlipApprovalEntry"
+          component={ShowTrailSlipApprovalEntry}
+          options={{title: 'My Trail Slip Approvals'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
