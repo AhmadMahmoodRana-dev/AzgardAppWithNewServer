@@ -8,20 +8,7 @@ const LeaveApprovalEntry = () => {
   const [loading, setLoading] = useState(false);
 
   const formatDate = dateString => {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = months[date.getMonth()];
@@ -152,7 +139,7 @@ const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
       <Text style={styles.text}>
         From: {formatDate(item.FROM_DATE)} To: {formatDate(item.TO_DATE)}{' '}
         {item.LEAVE_TYPE === 'Short Leave' ||
-        item.LEAVE_TYPE === 'Out Door Duty'
+         item.LEAVE_TYPE === 'Out Door Duty'
           ? 'Hours: '
           : 'Days:'}
         {item.NO_OF_DAYS}
