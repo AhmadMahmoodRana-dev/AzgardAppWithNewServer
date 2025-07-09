@@ -1,6 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {View,Text,FlatList,TouchableOpacity,ActivityIndicator,StyleSheet,Alert,ImageBackground} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+  ImageBackground,
+} from 'react-native';
 import BASEURL from '../Constants/BaseUrl';
+import axios from 'axios';
 
 const ShowSimApprovalEntry = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -30,7 +40,7 @@ const ShowSimApprovalEntry = () => {
 
   useEffect(() => {
     fetchLeaveRequests();
-    console.log(global.xx_user_id)
+    console.log(global.xx_user_id);
   }, []);
 
   const fetchLeaveRequests = async () => {
@@ -49,23 +59,22 @@ const ShowSimApprovalEntry = () => {
     }
   };
 
+  // f487897a0683e90da5bc655b7814fc20c22f9ce81af80038fe72d5a2997e3b25
+
   const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
-      const response = await fetch(
-        `${BASEURL}/send-approval-notification`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            empId: empId,
-            leaveType: leaveType,
-            noOfDays: noOfDays,
-            leaveStatus: leaveStatus,
-          }),
+      const response = await fetch(`${BASEURL}/send-approval-notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          empId: empId,
+          leaveType: leaveType,
+          noOfDays: noOfDays,
+          leaveStatus: leaveStatus,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error('Failed to send notification');
@@ -79,20 +88,12 @@ const ShowSimApprovalEntry = () => {
     try {
       setLoading(true);
       const L_STATUS = 'APPROVED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({status: 'approved'}),
-        },
-      );
+      const response = await axios.put(`${BASEURL}/ords/api/PUT_SIM_APPROVAL/UPDATE?p_sim_id=${id}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`);
 
-      console.log('Response:', response);
+      console.log('Responseaa:', response);
+      console.log('ResponseID:', id);
 
-      if (response.ok) {
+      if (response.status === 200) {
         await sendNotification(empId, leaveType, noOfDays, L_STATUS);
         Alert.alert('Success', 'Leave approved successfully');
         fetchLeaveRequests();
@@ -109,21 +110,11 @@ const ShowSimApprovalEntry = () => {
   const rejectRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
       setLoading(true);
-      const L_STATUS = 'REJECTED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({status: 'rejected'}),
-        },
-      );
+      const L_STATUS = 'CANCELLED';
+      const response = await axios.put(`${BASEURL}/ords/api/PUT_SIM_APPROVAL/UPDATE?p_sim_id=${id}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`);
+      console.log('Response:', response);k
 
-      console.log('Response:', response);
-
-      if (response.ok) {
+      if (response.status === 200) {
         await sendNotification(empId, leaveType, noOfDays, L_STATUS);
         Alert.alert('Success', 'Leave rejected successfully');
         fetchLeaveRequests();
@@ -144,13 +135,13 @@ const ShowSimApprovalEntry = () => {
       <Text style={styles.text}>Limit Allowed: {item?.LIMIT_ALLOWED}</Text>
       <Text style={styles.text}>HOD Remarks: {item?.HOD_REMARKS}</Text>
       <Text style={styles.text}>HR Remarks: {item?.HR_REMARKS}</Text>
-      
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.buttonApprove}
           onPress={() =>
             approveRequest(
-              item?.EMP_LEAVE_ID,
+              item?.REQ_ID,
               item?.TYPE,
               item?.EMP_ID,
               item?.LEAVE_TYPE,
@@ -163,7 +154,7 @@ const ShowSimApprovalEntry = () => {
           style={styles.buttonReject}
           onPress={() =>
             rejectRequest(
-              item?.EMP_LEAVE_ID,
+              item?.REQ_ID,
               item?.TYPE,
               item?.EMP_ID,
               item?.LEAVE_TYPE,

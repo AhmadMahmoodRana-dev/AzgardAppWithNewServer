@@ -71,19 +71,8 @@ const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
 
     const L_STATUS = 'APPROVED';
 
-    const formData = new FormData();
-    formData.append('p_leave_id', id.toString());
-    formData.append('L_TYPE', TYPE);
-    formData.append('L_STATUS', L_STATUS);
-    formData.append('USER_ID', global.xx_user_id?.toString());
-
-    const response = await axios.put(`${BASEURL}/ords/api/PUT_LEAVE/UPDATE`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    console.log('Response:', response.data);
+    const response = await axios.put(`https://erp.visionplusapps.com:8081/ords/api/PUT_LEAVE/UPDATE?p_leave_id=${id}&L_STATUS=APPROVAL&USER_ID=${global.xx_user_id}`);
+console.log('Response:', response);
 
     if (response) {
       await sendNotification(empId, leaveType, noOfDays, L_STATUS);
@@ -102,35 +91,28 @@ const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
 ;
 
   const rejectRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
-    try {
-      setLoading(true);
-      const L_STATUS = 'REJECTED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({status: 'rejected'}),
-        },
-      );
+  try {
+    setLoading(true);
 
-      console.log('Response:', response);
+    const L_STATUS = 'CANCELLED';
 
-      if (response.ok) {
-        await sendNotification(empId, leaveType, noOfDays, L_STATUS);
-        Alert.alert('Success', 'Leave rejected successfully');
-        fetchLeaveRequests();
-      } else {
-        Alert.alert('Error', 'Failed to reject leave request');
-      }
-    } catch (error) {
+    const response = await axios.put(`https://erp.visionplusapps.com:8081/ords/api/PUT_LEAVE/UPDATE?p_leave_id=${id}&L_STATUS=CANCELLED&USER_ID=${global.xx_user_id}`);
+console.log('Response:', response);
+
+    if (response) {
+      await sendNotification(empId, leaveType, noOfDays, L_STATUS);
+      Alert.alert('Success', 'Leave reject successfully');
+      fetchLeaveRequests();
+    } else {
       Alert.alert('Error', 'Failed to reject leave request');
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Approval Error:', error);
+    Alert.alert('Error', 'Failed to reject leave request');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const renderItem = ({item}) => (
     <View style={styles.card}>

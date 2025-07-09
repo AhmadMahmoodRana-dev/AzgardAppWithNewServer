@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View,Text,FlatList,TouchableOpacity,ActivityIndicator,StyleSheet,Alert,ImageBackground} from 'react-native';
 import BASEURL from '../Constants/BaseUrl';
+import axios from 'axios';
 
 const ShowLaptopApprovalEntry = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -24,10 +25,10 @@ const ShowLaptopApprovalEntry = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASEURL}/ords/api/az/get?SUP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/get_laptop_approval/get?X_EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
-      setLeaveRequests(data.leave_approval);
+      setLeaveRequests(data.laptop_approval);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch leave requests');
     } finally {
@@ -65,20 +66,11 @@ const ShowLaptopApprovalEntry = () => {
     try {
       setLoading(true);
       const L_STATUS = 'APPROVED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({status: 'approved'}),
-        },
-      );
+      const response = await axios.put(`${BASEURL}/ords/api/PUT_LAPTOP_APPROVAL/UPDATE?p_laptop_id=${id}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`);
 
       console.log('Response:', response);
 
-      if (response.ok) {
+      if (response.status === 200) {
         await sendNotification(empId, leaveType, noOfDays, L_STATUS);
         Alert.alert('Success', 'Leave approved successfully');
         fetchLeaveRequests();
@@ -95,21 +87,12 @@ const ShowLaptopApprovalEntry = () => {
   const rejectRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
       setLoading(true);
-      const L_STATUS = 'REJECTED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({status: 'rejected'}),
-        },
-      );
+      const L_STATUS = 'CANCELLED';
+      const response = await axios.put(`${BASEURL}/ords/api/PUT_LAPTOP_APPROVAL/UPDATE?p_laptop_id=${id}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`);
 
       console.log('Response:', response);
 
-      if (response.ok) {
+      if (response.status === 200) {
         await sendNotification(empId, leaveType, noOfDays, L_STATUS);
         Alert.alert('Success', 'Leave rejected successfully');
         fetchLeaveRequests();
@@ -124,47 +107,44 @@ const ShowLaptopApprovalEntry = () => {
   };
 
   const renderItem = ({item}) => (
-    <View style={styles.card}>
-      <Text style={styles.text}>Employee: {item.EMP_NAME}</Text>
-      <Text style={styles.text}>Reason: {item.REMARKS}</Text>
-      <Text style={styles.text}>
-        From: {formatDate(item.FROM_DATE)} To: {formatDate(item.TO_DATE)}{' '}
-        {item.LEAVE_TYPE === 'Short Leave' ||
-        item.LEAVE_TYPE === 'Out Door Duty'
-          ? 'Hours: '
-          : 'Days:'}
-        {item.NO_OF_DAYS}
-      </Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.buttonApprove}
-          onPress={() =>
-            approveRequest(
-              item.EMP_LEAVE_ID,
-              item.TYPE,
-              item.EMP_ID,
-              item.LEAVE_TYPE,
-              item.NO_OF_DAYS,
-            )
-          }>
-          <Text style={styles.buttonText}>Approve</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonReject}
-          onPress={() =>
-            rejectRequest(
-              item.EMP_LEAVE_ID,
-              item.TYPE,
-              item.EMP_ID,
-              item.LEAVE_TYPE,
-              item.NO_OF_DAYS,
-            )
-          }>
-          <Text style={styles.buttonText}>Reject</Text>
-        </TouchableOpacity>
+      <View style={styles.card}>
+        <Text style={styles.text}>Employee: {item?.EMP_NAME}</Text>
+        <Text style={styles.text}>Level: {item?.EMPLOYMENT_LEVEL}</Text>
+        <Text style={styles.text}>Limit Allowed: {item?.LIMIT_ALLOW}</Text>
+        <Text style={styles.text}>HOD Remarks: {item?.HOD_REMARKS}</Text>
+        <Text style={styles.text}>HR Remarks: {item?.HR_REMARKS}</Text>
+  
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.buttonApprove}
+            onPress={() =>
+              approveRequest(
+                item?.REQ_ID,
+                item?.TYPE,
+                item?.EMP_ID,
+                item?.LEAVE_TYPE,
+                item?.NO_OF_DAYS,
+              )
+            }>
+            <Text style={styles.buttonText}>Approve</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonReject}
+            onPress={() =>
+              rejectRequest(
+                item?.REQ_ID,
+                item?.TYPE,
+                item?.EMP_ID,
+                item?.LEAVE_TYPE,
+                item?.NO_OF_DAYS,
+              )
+            }>
+            <Text style={styles.buttonText}>Reject</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
+    );
+  
 
   if (loading) {
     return (
@@ -185,7 +165,7 @@ const ShowLaptopApprovalEntry = () => {
       <View style={styles.overlay}>
         <FlatList
           data={leaveRequests}
-          keyExtractor={item => item.EMP_LEAVE_ID.toString()}
+          keyExtractor={item => item?.EMP_LEAVE_ID?.toString()}
           renderItem={renderItem}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No leave requests found</Text>
