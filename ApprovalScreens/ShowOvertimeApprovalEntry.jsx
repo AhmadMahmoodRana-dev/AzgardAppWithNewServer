@@ -1,19 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {View,Text,FlatList,TouchableOpacity,ActivityIndicator,StyleSheet,Alert,ImageBackground} from 'react-native';
 import BASEURL from '../Constants/BaseUrl';
+import axios from 'axios';
 
 const ShowOvertimeApprovalEntry = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const formatDate = dateString => {
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = months[date.getMonth()];
-    const year = String(date.getFullYear()).slice(-2);
-    return `${day}-${month}-${year}`;
-  };
+ function getOvertimeDuration(startISOString, endISOString) {
+  const start = new Date(startISOString);
+  const end = new Date(endISOString);
+
+  const diffMs = end - start;
+  if (diffMs <= 0) return "Overtime: 0 minutes";
+
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+  return `Overtime: ${diffHours} hour${diffHours !== 1 ? 's' : ''} ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''}`;
+}
+
 
   useEffect(() => {
     fetchLeaveRequests();
@@ -24,10 +30,10 @@ const ShowOvertimeApprovalEntry = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASEURL}/ords/api/az/get?SUP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/get_Overtime_Approval/get?X_EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
-      setLeaveRequests(data.leave_approval);
+      setLeaveRequests(data.Overtime_approval);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch leave requests');
     } finally {
@@ -65,20 +71,21 @@ const ShowOvertimeApprovalEntry = () => {
     try {
       setLoading(true);
       const L_STATUS = 'APPROVED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+      const response = await axios.put(
+        `${BASEURL}/ords/api/Put_Overtime_Approval/UPDATE`,
+        {}, 
         {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
+          params: {
+            p_overtime_id: id,
+            L_STATUS,
+            USER_ID: global.xx_user_id,
           },
-          body: JSON.stringify({status: 'approved'}),
         },
       );
 
       console.log('Response:', response);
 
-      if (response.ok) {
+      if (response.status == 200) {
         await sendNotification(empId, leaveType, noOfDays, L_STATUS);
         Alert.alert('Success', 'Leave approved successfully');
         fetchLeaveRequests();
@@ -95,21 +102,22 @@ const ShowOvertimeApprovalEntry = () => {
   const rejectRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
       setLoading(true);
-      const L_STATUS = 'REJECTED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+      const L_STATUS = 'CANCELLED';
+      const response = await axios.put(
+        `${BASEURL}/ords/api/Put_Overtime_Approval/UPDATE`,
+        {}, 
         {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
+          params: {
+            p_overtime_id: id,
+            L_STATUS,
+            USER_ID: global.xx_user_id,
           },
-          body: JSON.stringify({status: 'rejected'}),
         },
       );
 
       console.log('Response:', response);
 
-      if (response.ok) {
+      if (response.status == 200) {
         await sendNotification(empId, leaveType, noOfDays, L_STATUS);
         Alert.alert('Success', 'Leave rejected successfully');
         fetchLeaveRequests();
@@ -125,26 +133,20 @@ const ShowOvertimeApprovalEntry = () => {
 
   const renderItem = ({item}) => (
     <View style={styles.card}>
-      <Text style={styles.text}>Employee: {item.EMP_NAME}</Text>
-      <Text style={styles.text}>Reason: {item.REMARKS}</Text>
-      <Text style={styles.text}>
-        From: {formatDate(item.FROM_DATE)} To: {formatDate(item.TO_DATE)}{' '}
-        {item.LEAVE_TYPE === 'Short Leave' ||
-        item.LEAVE_TYPE === 'Out Door Duty'
-          ? 'Hours: '
-          : 'Days:'}
-        {item.NO_OF_DAYS}
-      </Text>
+      <Text style={styles.text}>Employee: {item?.EMP_NAME}</Text>
+      <Text style={styles.text}>Department: {item?.DEPARTMENT}</Text>
+      <Text style={styles.text}>{getOvertimeDuration(item?.ACTUAL_OT_START, item?.ACTUAL_OT_END)}</Text>
+      
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.buttonApprove}
           onPress={() =>
             approveRequest(
-              item.EMP_LEAVE_ID,
-              item.TYPE,
-              item.EMP_ID,
-              item.LEAVE_TYPE,
-              item.NO_OF_DAYS,
+              item?.OT_REQ_ID,
+              item?.TYPE,
+              item?.EMP_ID,
+              item?.LEAVE_TYPE,
+              item?.NO_OF_DAYS,
             )
           }>
           <Text style={styles.buttonText}>Approve</Text>
@@ -153,11 +155,11 @@ const ShowOvertimeApprovalEntry = () => {
           style={styles.buttonReject}
           onPress={() =>
             rejectRequest(
-              item.EMP_LEAVE_ID,
-              item.TYPE,
-              item.EMP_ID,
-              item.LEAVE_TYPE,
-              item.NO_OF_DAYS,
+              item?.OT_REQ_ID,
+              item?.TYPE,
+              item?.EMP_ID,
+              item?.LEAVE_TYPE,
+              item?.NO_OF_DAYS,
             )
           }>
           <Text style={styles.buttonText}>Reject</Text>
@@ -185,7 +187,7 @@ const ShowOvertimeApprovalEntry = () => {
       <View style={styles.overlay}>
         <FlatList
           data={leaveRequests}
-          keyExtractor={item => item.EMP_LEAVE_ID.toString()}
+          keyExtractor={item => item?.EMP_LEAVE_ID?.toString()}
           renderItem={renderItem}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No leave requests found</Text>

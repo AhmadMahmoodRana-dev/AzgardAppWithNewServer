@@ -1,13 +1,36 @@
 import React, {useEffect, useState} from 'react';
-import {View,Text,FlatList,TouchableOpacity,ActivityIndicator,StyleSheet,Alert,ImageBackground} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+  Alert,
+  ImageBackground,
+} from 'react-native';
 import BASEURL from '../Constants/BaseUrl';
+import axios from 'axios';
 
 const ShowTransferApprovalEntry = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const formatDate = dateString => {
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = months[date.getMonth()];
@@ -17,17 +40,17 @@ const ShowTransferApprovalEntry = () => {
 
   useEffect(() => {
     fetchLeaveRequests();
-    console.log(global.xx_user_id)
+    console.log(global.xx_user_id);
   }, []);
 
   const fetchLeaveRequests = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${BASEURL}/ords/api/az/get?SUP_ID=${global.xx_emp_id}`,
+        `${BASEURL}/ords/api/get_transfer_approval/get?X_EMP_ID=${global.xx_emp_id}`,
       );
       const data = await response.json();
-      setLeaveRequests(data.leave_approval);
+      setLeaveRequests(data.transfer_data);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch leave requests');
     } finally {
@@ -37,21 +60,18 @@ const ShowTransferApprovalEntry = () => {
 
   const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
-      const response = await fetch(
-        `${BASEURL}/send-approval-notification`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            empId: empId,
-            leaveType: leaveType,
-            noOfDays: noOfDays,
-            leaveStatus: leaveStatus,
-          }),
+      const response = await fetch(`${BASEURL}/send-approval-notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          empId: empId,
+          leaveType: leaveType,
+          noOfDays: noOfDays,
+          leaveStatus: leaveStatus,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error('Failed to send notification');
@@ -64,27 +84,24 @@ const ShowTransferApprovalEntry = () => {
   const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
       setLoading(true);
-      const L_STATUS = 'APPROVED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+      const T_STATUS = 'APPROVED';
+      const response = await axios.put(
+        `${BASEURL}/ords/api/PUT_TRANSFER_STATUS/UPDATE`,
+        {},
         {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
+          params: {
+            p_train_id: id,
+            T_STATUS,
+            USER_ID: global.xx_user_id,
           },
-          body: JSON.stringify({status: 'approved'}),
         },
       );
 
       console.log('Response:', response);
 
-      if (response.ok) {
-        await sendNotification(empId, leaveType, noOfDays, L_STATUS);
-        Alert.alert('Success', 'Leave approved successfully');
-        fetchLeaveRequests();
-      } else {
-        Alert.alert('Error', 'Failed to approve leave request');
-      }
+      await sendNotification(empId, leaveType, noOfDays, T_STATUS);
+      Alert.alert('Success', 'Leave approved successfully');
+      fetchLeaveRequests();
     } catch (error) {
       Alert.alert('Error', 'Failed to approve leave request');
     } finally {
@@ -95,27 +112,24 @@ const ShowTransferApprovalEntry = () => {
   const rejectRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
       setLoading(true);
-      const L_STATUS = 'REJECTED';
-      const response = await fetch(
-        `${BASEURL}/ords/api/api/update?LEAVE_ID=${id}&L_TYPE=${TYPE}&L_STATUS=${L_STATUS}&USER_ID=${global.xx_user_id}`,
+      const T_STATUS = 'CANCELLED';
+      const response = await axios.put(
+        `${BASEURL}/ords/api/PUT_TRANSFER_STATUS/UPDATE`,
+        {},
         {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
+          params: {
+            p_train_id: id,
+            T_STATUS,
+            USER_ID: global.xx_user_id,
           },
-          body: JSON.stringify({status: 'rejected'}),
         },
       );
 
       console.log('Response:', response);
 
-      if (response.ok) {
-        await sendNotification(empId, leaveType, noOfDays, L_STATUS);
-        Alert.alert('Success', 'Leave rejected successfully');
-        fetchLeaveRequests();
-      } else {
-        Alert.alert('Error', 'Failed to reject leave request');
-      }
+      await sendNotification(empId, leaveType, noOfDays, L_STATUS);
+      Alert.alert('Success', 'Leave rejected successfully');
+      fetchLeaveRequests();
     } catch (error) {
       Alert.alert('Error', 'Failed to reject leave request');
     } finally {
@@ -125,26 +139,24 @@ const ShowTransferApprovalEntry = () => {
 
   const renderItem = ({item}) => (
     <View style={styles.card}>
-      <Text style={styles.text}>Employee: {item.EMP_NAME}</Text>
-      <Text style={styles.text}>Reason: {item.REMARKS}</Text>
-      <Text style={styles.text}>
-        From: {formatDate(item.FROM_DATE)} To: {formatDate(item.TO_DATE)}{' '}
-        {item.LEAVE_TYPE === 'Short Leave' ||
-        item.LEAVE_TYPE === 'Out Door Duty'
-          ? 'Hours: '
-          : 'Days:'}
-        {item.NO_OF_DAYS}
-      </Text>
+      <Text style={styles.text}>Employee: {item?.EMP_NAME}</Text>
+      <Text style={styles.text}>Department: {item?.DEPARTMENT}</Text>
+      <Text style={styles.text}>Designation: {item?.DESIGNATION}</Text>
+      <Text style={styles.text}>Section: {item?.SECTION}</Text>
+      <Text style={styles.text}>New Department: {item?.NEW_DEPARTMENT}</Text>
+      <Text style={styles.text}>New Designation: {item?.NEW_DESIGNATION}</Text>
+      <Text style={styles.text}>New Section: {item?.NEW_SECTION}</Text>
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.buttonApprove}
           onPress={() =>
             approveRequest(
-              item.EMP_LEAVE_ID,
-              item.TYPE,
-              item.EMP_ID,
-              item.LEAVE_TYPE,
-              item.NO_OF_DAYS,
+              item?.TRAN_ID,
+              item?.TYPE,
+              item?.EMP_ID,
+              item?.LEAVE_TYPE,
+              item?.NO_OF_DAYS,
             )
           }>
           <Text style={styles.buttonText}>Approve</Text>
@@ -153,11 +165,11 @@ const ShowTransferApprovalEntry = () => {
           style={styles.buttonReject}
           onPress={() =>
             rejectRequest(
-              item.EMP_LEAVE_ID,
-              item.TYPE,
-              item.EMP_ID,
-              item.LEAVE_TYPE,
-              item.NO_OF_DAYS,
+              item?.TRAN_ID,
+              item?.TYPE,
+              item?.EMP_ID,
+              item?.LEAVE_TYPE,
+              item?.NO_OF_DAYS,
             )
           }>
           <Text style={styles.buttonText}>Reject</Text>
@@ -185,7 +197,7 @@ const ShowTransferApprovalEntry = () => {
       <View style={styles.overlay}>
         <FlatList
           data={leaveRequests}
-          keyExtractor={item => item.EMP_LEAVE_ID.toString()}
+          keyExtractor={item => item?.EMP_LEAVE_ID?.toString()}
           renderItem={renderItem}
           ListEmptyComponent={
             <Text style={styles.emptyText}>No leave requests found</Text>
