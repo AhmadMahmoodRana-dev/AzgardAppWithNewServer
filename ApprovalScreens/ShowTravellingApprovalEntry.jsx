@@ -39,7 +39,7 @@ const ShowTravellingApprovalEntry = () => {
   const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
       const response = await fetch(
-        `${BASEURL}/send-approval-notification`,
+        'https://dwpcare.com.pk/azgard/send-approval-notification',
         {
           method: 'POST',
           headers: {
@@ -61,7 +61,6 @@ const ShowTravellingApprovalEntry = () => {
       console.error('Notification Error:', error);
     }
   };
-
   const approveRequest = async (id, TYPE, empId, leaveType, noOfDays) => {
     try {
       setLoading(true);

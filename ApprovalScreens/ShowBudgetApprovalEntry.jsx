@@ -36,10 +36,10 @@ const ShowBudgetApprovalEntry = () => {
     }
   };
 
-  const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
+ const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
       const response = await fetch(
-        `${BASEURL}/send-approval-notification`,
+        'https://dwpcare.com.pk/azgard/send-approval-notification',
         {
           method: 'POST',
           headers: {

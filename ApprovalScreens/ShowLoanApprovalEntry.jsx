@@ -63,20 +63,23 @@ const ShowLoanApprovalEntry = () => {
     }
   };
 
-  const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
+ const sendNotification = async (empId, leaveType, noOfDays, leaveStatus) => {
     try {
-      const response = await fetch(`${BASEURL}/send-approval-notification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://dwpcare.com.pk/azgard/send-approval-notification',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            empId: empId,
+            leaveType: leaveType,
+            noOfDays: noOfDays,
+            leaveStatus: leaveStatus,
+          }),
         },
-        body: JSON.stringify({
-          empId: empId,
-          leaveType: leaveType,
-          noOfDays: noOfDays,
-          leaveStatus: leaveStatus,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error('Failed to send notification');
